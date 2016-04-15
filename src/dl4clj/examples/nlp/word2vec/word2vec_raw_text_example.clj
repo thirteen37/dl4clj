@@ -1,7 +1,7 @@
 (ns dl4clj.examples.nlp.word2vec.word2vec-raw-text-example
-  (:require [taoensso.timbre :as timbre :refer (info)])
-  (:import [org.canova.api.util ClassPathResource]
-           [org.deeplearning4j.models.embeddings.loader WordVectorSerializer]
+  (:require [clojure.java.io :refer [resource]]
+            [taoensso.timbre :as timbre :refer (info)])
+  (:import [org.deeplearning4j.models.embeddings.loader WordVectorSerializer]
            [org.deeplearning4j.models.word2vec Word2Vec$Builder]
            [org.deeplearning4j.text.sentenceiterator BasicLineIterator SentenceIterator]
            [org.deeplearning4j.text.tokenization.tokenizer.preprocessor CommonPreprocessor]
@@ -9,7 +9,8 @@
            [org.deeplearning4j.ui UiServer]))
 
 (defn -main [& args]
-  (let [file-path (-> "raw_sentences.txt" ClassPathResource. .getFile .getAbsolutePath)]
+  (let [file-path (-> "raw_sentences.txt" resource .getFile)]
+    (info file-path)
     (info "Load & Vectorize Sentences....")
     (let [iter (BasicLineIterator. file-path)
           t (DefaultTokenizerFactory.)] (.setTokenPreProcessor t (CommonPreprocessor.))

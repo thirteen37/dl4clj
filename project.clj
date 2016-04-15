@@ -9,5 +9,4 @@
                  [org.deeplearning4j/deeplearning4j-nlp "0.4-rc3.8"]
                  [org.deeplearning4j/deeplearning4j-ui "0.4-rc3.8"]
                  [org.nd4j/nd4j-x86 "0.4-rc3.8"]
-                 [org.nd4j/canova-api "0.0.0.14"]
                  [com.google.guava/guava "19.0"]])

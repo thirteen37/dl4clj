@@ -1,11 +1,11 @@
 (ns dl4clj.examples.nlp.word2vec.word2vec-uptraining-example
   (:require [clojure.java.io :refer [resource]]
             [taoensso.timbre :as timbre :refer (info)]
-            [dl4clj.models.word2vec.word2vec :as word2vec]
-            [dl4clj.models.embeddings.inmemory.in-memory-lookup-table :as imlt])
+            [dl4clj.models.embeddings.inmemory.in-memory-lookup-table :as imlt]
+            [dl4clj.models.embeddings.loader.word-vector-serializer :refer [load-full-model write-full-model]]
+            [dl4clj.models.word2vec.word2vec :refer [fit words-nearest] :as word2vec])
   (:import [org.canova.api.util ClassPathResource]
            [org.deeplearning4j.models.embeddings WeightLookupTable]
-           [org.deeplearning4j.models.embeddings.loader WordVectorSerializer]
            [org.deeplearning4j.models.word2vec.wordstore.inmemory InMemoryLookupCache]
            [org.deeplearning4j.text.sentenceiterator BasicLineIterator SentenceIterator]
            [org.deeplearning4j.text.tokenization.tokenizer.preprocessor CommonPreprocessor]
@@ -34,15 +34,15 @@
                                   :lookup-table table
                                   :vocab-cache cache)]
           (info "Fitting Word2Vec model....")
-          (.fit vec)
-          (info "Closest words to 'day' on 1st run:" (.wordsNearest vec "day" 10))
-          (WordVectorSerializer/writeFullModel vec "pathToSaveModel.txt")
-          (let [word2vec (WordVectorSerializer/loadFullModel "pathToSaveModel.txt")
-                iterator (BasicLineIterator. file-path)
-                tokenizerFactory (DefaultTokenizerFactory.)]
-            (.setTokenPreProcessor tokenizerFactory (CommonPreprocessor.))
-            (.setTokenizerFactory word2vec tokenizerFactory)
-            (.setSentenceIter word2vec iterator)
-            (info "Word2vec uptraining...")
-            (.fit word2vec)
-            (info "Closest words to 'day' on 2nd run:" (.wordsNearest word2vec "day" 10))))))))
+          (fit vec)
+          (info "Closest words to 'day' on 1st run:" (words-nearest vec "day" 10))
+          (write-full-model vec "pathToSaveModel.txt"))))
+    (let [word2vec (load-full-model "pathToSaveModel.txt")
+          iterator (BasicLineIterator. file-path)
+          tokenizerFactory (DefaultTokenizerFactory.)]
+      (.setTokenPreProcessor tokenizerFactory (CommonPreprocessor.))
+      (.setTokenizerFactory word2vec tokenizerFactory)
+      (.setSentenceIter word2vec iterator)
+      (info "Word2vec uptraining...")
+      (fit word2vec)
+      (info "Closest words to 'day' on 2nd run:" (words-nearest word2vec "day" 10)))))

@@ -6,3 +6,9 @@
   `(-> (Word2Vec$Builder.)
        ~@(make-methods args)
        .build))
+
+(defn fit [word2vec]
+  (.fit word2vec))
+
+(defn words-nearest [word2vec word n]
+  (.wordsNearest word2vec word n))

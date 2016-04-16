@@ -1,9 +1,8 @@
 (ns dl4clj.models.word2vec.word2vec
-  (:require [camel-snake-kebab.core :refer [->camelCase]])
+  (:require [dl4clj.internal.wrapper-helpers :refer [make-methods]])
   (:import [org.deeplearning4j.models.word2vec Word2Vec$Builder]))
 
 (defmacro build [& {:as args}]
-  `(.build
-    (doto (Word2Vec$Builder.)
-      ~@(map (fn [[method arg]] (list (symbol (str "." (name (->camelCase method)))) arg))
-             args))))
+  `(-> (Word2Vec$Builder.)
+       ~@(make-methods args)
+       .build))

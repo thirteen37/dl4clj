@@ -1,12 +1,11 @@
 (ns dl4clj.examples.nlp.word2vec.word2vec-uptraining-example
   (:require [clojure.java.io :refer [resource]]
             [taoensso.timbre :as timbre :refer (info)]
-            [dl4clj.models.word2vec.word2vec :as word2vec])
+            [dl4clj.models.word2vec.word2vec :as word2vec]
+            [dl4clj.models.embeddings.inmemory.in-memory-lookup-table :as imlt])
   (:import [org.canova.api.util ClassPathResource]
            [org.deeplearning4j.models.embeddings WeightLookupTable]
-           [org.deeplearning4j.models.embeddings.inmemory InMemoryLookupTable$Builder]
            [org.deeplearning4j.models.embeddings.loader WordVectorSerializer]
-           [org.deeplearning4j.models.word2vec VocabWord Word2Vec$Builder]
            [org.deeplearning4j.models.word2vec.wordstore.inmemory InMemoryLookupCache]
            [org.deeplearning4j.text.sentenceiterator BasicLineIterator SentenceIterator]
            [org.deeplearning4j.text.tokenization.tokenizer.preprocessor CommonPreprocessor]
@@ -19,12 +18,10 @@
           t (DefaultTokenizerFactory.)]
       (.setTokenPreProcessor t (CommonPreprocessor.))
       (let [cache (InMemoryLookupCache.)
-            table (-> (InMemoryLookupTable$Builder.)
-                      (.vectorLength 100)
-                      (.useAdaGrad false)
-                      (.cache cache)
-                      (.lr 0.025)
-                      .build)]
+            table (imlt/build :vector-length 100
+                              :use-ada-grad false
+                              :cache cache
+                              :lr 0.025)]
         (info "Building model....")
         (let [vec (word2vec/build :min-word-frequency 5
                                   :iterations 1

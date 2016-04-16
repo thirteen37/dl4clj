@@ -1,6 +1,7 @@
 (ns dl4clj.examples.nlp.word2vec.word2vec-uptraining-example
   (:require [clojure.java.io :refer [resource]]
-            [taoensso.timbre :as timbre :refer (info)])
+            [taoensso.timbre :as timbre :refer (info)]
+            [dl4clj.models.word2vec.word2vec :as word2vec])
   (:import [org.canova.api.util ClassPathResource]
            [org.deeplearning4j.models.embeddings WeightLookupTable]
            [org.deeplearning4j.models.embeddings.inmemory InMemoryLookupTable$Builder]
@@ -25,18 +26,16 @@
                       (.lr 0.025)
                       .build)]
         (info "Building model....")
-        (let [vec (-> (Word2Vec$Builder.)
-                      (.minWordFrequency 5)
-                      (.iterations 1)
-                      (.epochs 1)
-                      (.layerSize 100)
-                      (.seed 42)
-                      (.windowSize 5)
-                      (.iterate iter)
-                      (.tokenizerFactory t)
-                      (.lookupTable table)
-                      (.vocabCache cache)
-                      .build)]
+        (let [vec (word2vec/build :min-word-frequency 5
+                                  :iterations 1
+                                  :epochs 1
+                                  :layer-size 100
+                                  :seed 42
+                                  :window-size 5
+                                  :iterate iter
+                                  :tokenizer-factory t
+                                  :lookup-table table
+                                  :vocab-cache cache)]
           (info "Fitting Word2Vec model....")
           (.fit vec)
           (info "Closest words to 'day' on 1st run:" (.wordsNearest vec "day" 10))

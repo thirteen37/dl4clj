@@ -5,6 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.taoensso/timbre "4.3.1"]
+                 [camel-snake-kebab "0.3.2"]
+                 ;; dl4j
                  [org.deeplearning4j/deeplearning4j-core "0.4-rc3.8"]
                  [org.deeplearning4j/deeplearning4j-nlp "0.4-rc3.8"]
                  [org.deeplearning4j/deeplearning4j-ui "0.4-rc3.8"]

@@ -3,17 +3,18 @@
             [taoensso.timbre :as timbre :refer (info)]
             [dl4clj.models.embeddings.loader.word-vector-serializer :refer [write-word-vectors]]
             [dl4clj.models.word2vec.word2vec :refer [fit words-nearest] :as word2vec])
-  (:import [org.deeplearning4j.models.embeddings.loader WordVectorSerializer]
-           [org.deeplearning4j.text.sentenceiterator BasicLineIterator SentenceIterator]
+  (:import [org.deeplearning4j.text.sentenceiterator BasicLineIterator]
            [org.deeplearning4j.text.tokenization.tokenizer.preprocessor CommonPreprocessor]
-           [org.deeplearning4j.text.tokenization.tokenizerfactory DefaultTokenizerFactory TokenizerFactory]
+           [org.deeplearning4j.text.tokenization.tokenizerfactory DefaultTokenizerFactory]
            [org.deeplearning4j.ui UiServer]))
 
 (defn -main [& args]
   (let [file-path (-> "raw_sentences.txt" resource .getFile)]
     (info file-path)
     (info "Load & Vectorize Sentences....")
-    (let [iter (BasicLineIterator. file-path)
+    (let [;; Strip white space before and after for each line
+          iter (BasicLineIterator. file-path)
+          ;; Split on white spaces in the line to get words
           t (DefaultTokenizerFactory.)]
       (.setTokenPreProcessor t (CommonPreprocessor.))
       (info "Building model....")
@@ -27,6 +28,7 @@
         (info "Fitting Word2Vec model....")
         (fit vec)
         (info "Writing word vectors to text file....")
+        ;; Write word vectors
         (write-word-vectors vec "pathToWriteto.txt")
         (info "Closest Words:")
         (println (words-nearest vec "day" 10))
